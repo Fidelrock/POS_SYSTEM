@@ -43,7 +43,7 @@ A WPF-based Point of Sale (POS) system for supermarket operations, built with .N
 
 ## Contributors
 
-- [Your Name Here]
+- Fidelrock
 
 ## License
 
