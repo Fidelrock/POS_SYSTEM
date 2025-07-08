@@ -24,5 +24,17 @@ namespace POS_SYSTEM.Views
         {
             InitializeComponent();
         }
+
+        private void BarcodeTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                var vm = DataContext as POS_SYSTEM.ViewModels.POSViewModel;
+                if (vm != null && vm.ScanBarcodeCommand.CanExecute(null))
+                {
+                    vm.ScanBarcodeCommand.Execute(null);
+                }
+            }
+        }
     }
 }

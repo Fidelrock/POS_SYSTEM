@@ -4,12 +4,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:POS_SYSTEM.ViewModels"
+             xmlns:utils="clr-namespace:POS_SYSTEM.Utilities"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <vm:POSViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <utils:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </UserControl.Resources>
+    
     <Grid Margin="20">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -19,12 +25,21 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- User Feedback Message -->
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,40,0,10"
+                   Text="{Binding Message}"
+                   Foreground="Red"
+                   FontWeight="Bold"
+                   FontSize="14"
+                   Visibility="{Binding Message, Converter={StaticResource StringToVisibilityConverter}}"/>
+
         <!-- Barcode Input -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBox Width="200" Height="30" Margin="0,0,10,0"
                      Text="{Binding BarcodeInput, UpdateSourceTrigger=PropertyChanged}" 
                      VerticalContentAlignment="Center"
-                     ToolTip="Scan or enter barcode..."/>
+                     ToolTip="Scan or enter barcode..."
+                     KeyDown="BarcodeTextBox_KeyDown"/>
             <Button Content="Add to Cart" Height="30" Width="100"
                     Command="{Binding ScanBarcodeCommand}"/>
         </StackPanel>
@@ -32,8 +47,10 @@
         <!-- Cart List -->
         <DataGrid Grid.Row="1" ItemsSource="{Binding Cart}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,10">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="100"/>
+                <DataGridTextColumn Header="Product" Binding="{Binding Product.Name}" Width="*"/>
+                <DataGridTextColumn Header="Price" Binding="{Binding Product.Price}" Width="100"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal}" Width="100"/>
                 <DataGridTemplateColumn Header="Remove" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

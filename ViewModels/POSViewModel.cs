@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace POS_SYSTEM.ViewModels
 {
@@ -18,7 +19,14 @@ namespace POS_SYSTEM.ViewModels
             set { _barcodeInput = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Product> Cart { get; set; } = new ObservableCollection<Product>();
+        private string _message;
+        public string Message
+        {
+            get => _message;
+            set { _message = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<CartItem> Cart { get; set; } = new ObservableCollection<CartItem>();
 
         private decimal _total;
         public decimal Total
@@ -33,31 +41,67 @@ namespace POS_SYSTEM.ViewModels
 
         public POSViewModel()
         {
-            // Initialize commands (implementations to be added)
             ScanBarcodeCommand = new RelayCommand(ScanBarcode);
-            RemoveFromCartCommand = new RelayCommand<Product>(RemoveFromCart);
+            RemoveFromCartCommand = new RelayCommand<CartItem>(RemoveFromCart);
             CheckoutCommand = new RelayCommand(Checkout);
         }
 
         private void ScanBarcode()
         {
-            // Lookup product by barcode and add to cart
+            if (string.IsNullOrWhiteSpace(BarcodeInput))
+                return;
+
             var product = _databaseService.GetProductByBarcode(BarcodeInput);
-            if (product != null && product.Stock > 0)
+            if (product != null)
             {
-                Cart.Add(product);
-                CalculateTotal();
+                if (product.Stock <= 0)
+                {
+                    Message = $"'{product.Name}' is out of stock.";
+                }
+                else
+                {
+                    var existingItem = Cart.FirstOrDefault(ci => ci.Product.ProductId == product.ProductId);
+                    if (existingItem != null)
+                    {
+                        if (existingItem.Quantity < product.Stock)
+                        {
+                            existingItem.Quantity++;
+                            Message = string.Empty;
+                        }
+                        else
+                        {
+                            Message = $"Cannot add more '{product.Name}'. Only {product.Stock} in stock.";
+                        }
+                    }
+                    else
+                    {
+                        Cart.Add(new CartItem { Product = product, Quantity = 1 });
+                        Message = string.Empty;
+                    }
+                    CalculateTotal();
+                }
             }
-            // Optionally handle not found or out of stock
+            else
+            {
+                Message = $"Product with barcode '{BarcodeInput}' not found.";
+            }
+            BarcodeInput = string.Empty;
         }
 
-        private void RemoveFromCart(Product product)
+        private void RemoveFromCart(CartItem cartItem)
         {
-            if (Cart.Contains(product))
+            if (cartItem == null) return;
+            if (cartItem.Quantity > 1)
             {
-                Cart.Remove(product);
-                CalculateTotal();
+                cartItem.Quantity--;
+                Message = string.Empty;
             }
+            else
+            {
+                Cart.Remove(cartItem);
+                Message = string.Empty;
+            }
+            CalculateTotal();
         }
 
         private void Checkout()
@@ -65,44 +109,66 @@ namespace POS_SYSTEM.ViewModels
             if (Cart.Count == 0)
                 return;
 
-            // Create Sale
+            // Validate all cart items before checkout
+            foreach (var cartItem in Cart)
+            {
+                if (cartItem.Quantity > cartItem.Product.Stock)
+                {
+                    Message = $"Only {cartItem.Product.Stock} of '{cartItem.Product.Name}' in stock. Please adjust quantity.";
+                    return;
+                }
+            }
+
             var sale = new Sale
             {
                 Date = DateTime.Now,
                 TotalAmount = Total
             };
 
-            // Create SaleItems (each product in cart is quantity 1 for now)
             var saleItems = new List<SaleItem>();
-            foreach (var product in Cart)
+            foreach (var cartItem in Cart)
             {
                 // Update stock
-                product.Stock -= 1;
-                _databaseService.UpdateProduct(product);
+                cartItem.Product.Stock -= cartItem.Quantity;
+                _databaseService.UpdateProduct(cartItem.Product);
 
                 saleItems.Add(new SaleItem
                 {
-                    ProductId = product.ProductId,
-                    Quantity = 1,
-                    UnitPrice = product.Price
+                    ProductId = cartItem.Product.ProductId,
+                    Quantity = cartItem.Quantity,
+                    UnitPrice = cartItem.Product.Price
                 });
             }
 
-            // Save Sale and SaleItems
             _databaseService.AddSale(sale, saleItems);
 
-            // Clear cart and total
             Cart.Clear();
             Total = 0;
+            Message = "Checkout successful!";
         }
 
         private void CalculateTotal()
         {
-            Total = 0;
-            foreach (var item in Cart)
+            Total = Cart.Sum(item => item.Subtotal);
+        }
+
+        public void ValidateCartItemQuantity(CartItem cartItem)
+        {
+            if (cartItem.Quantity < 1)
             {
-                Total += item.Price;
+                cartItem.Quantity = 1;
+                Message = "Quantity cannot be less than 1.";
             }
+            else if (cartItem.Quantity > cartItem.Product.Stock)
+            {
+                cartItem.Quantity = cartItem.Product.Stock;
+                Message = $"Only {cartItem.Product.Stock} '{cartItem.Product.Name}' in stock.";
+            }
+            else
+            {
+                Message = string.Empty;
+            }
+            CalculateTotal();
         }
     }
 } 
