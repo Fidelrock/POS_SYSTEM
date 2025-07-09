@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:POS_SYSTEM.Views"
         mc:Ignorable="d"
-        Title="Point of Sale" Height="500" Width="900">
+        Title="Point of Sale System" Height="600" Width="1000">
     <Grid>
-        <views:InventoryView />
+        <TabControl>
+            <TabItem Header="POS (Cashier)">
+                <views:POSView />
+            </TabItem>
+            <TabItem Header="Inventory (Admin)">
+                <views:InventoryView />
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
