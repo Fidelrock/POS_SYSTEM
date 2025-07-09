@@ -2,22 +2,32 @@
 
 A WPF-based Point of Sale (POS) system for supermarket operations, built with .NET Framework 4.7.2 and SQL Server, following the MVVM architecture.
 
+## Screenshots
+<!-- Add screenshots of the POS and Inventory/Admin interfaces here -->
+
 ## Features
 
-- **Barcode Scanning:** Scan or enter product barcodes to add items to the cart.
-- **Cart Management:** Add, remove, and update quantities of products in the cart.
-- **Real-Time Totals:** Automatic calculation of totals and subtotals.
-- **Checkout:** Processes sales, updates inventory, and records transactions.
-- **Inventory Management:** (Planned) Admin features for managing products and categories.
-- **Sales History:** (Planned) View past sales and generate reports.
-- **User Feedback:** Friendly error and status messages for cashier actions.
+- Cashier POS interface with barcode scanning, cart management, and real-time totals
+- Checkout with stock update and transaction logging
+- Admin inventory management: add, edit, delete products and categories
+- Update product stock levels
+- User-friendly validation and error messages
+- Demo data auto-inserts on first run for easy testing
 
-## Technologies
+## How to Use
 
-- **WPF (.NET Framework 4.7.2)**
-- **Entity Framework 6 (Code-First)**
-- **SQL Server**
-- **MVVM Pattern**
+- Run the application. Demo products and categories will be created if the database is empty.
+- Use the POS view to scan barcodes, add products to the cart, and checkout.
+- Switch to the Inventory view to manage products and categories.
+- Add or edit products/categories using the provided dialogs.
+
+## Project Structure
+
+- `Models/` - Data models (Product, Category, Sale, SaleItem, CartItem)
+- `ViewModels/` - MVVM ViewModels (POSViewModel, InventoryViewModel, etc.)
+- `Views/` - WPF XAML UI files (POSView, InventoryView, ProductDialog, CategoryDialog)
+- `Services/` - Database and business logic
+- `Utilities/` - Helpers and converters
 
 ## Getting Started
 
@@ -25,26 +35,15 @@ A WPF-based Point of Sale (POS) system for supermarket operations, built with .N
    ```sh
    git clone https://github.com/Fidelrock/POS_SYSTEM.git
    ```
-
 2. **Open the solution in Visual Studio.**
-
 3. **Configure your SQL Server connection string** in `App.config` if needed.
-
 4. **Build and run the application.**
    - On first run, the database and sample products will be created automatically.
 
-## Project Structure
+## Contributing
 
-- `Models/` - Data models (Product, Category, Sale, SaleItem, CartItem)
-- `ViewModels/` - MVVM ViewModels and commands
-- `Views/` - WPF XAML UI files
-- `Services/` - Database and business logic
-- `Utilities/` - Helpers and converters
-
-## Contributors
-
-- Fidelrock
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-[MIT](LICENSE) (or your chosen license)
+[MIT](LICENSE)
