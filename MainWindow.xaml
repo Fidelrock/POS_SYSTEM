@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="Point of Sale" Height="500" Width="900">
     <Grid>
-        <views:POSView />
+        <views:InventoryView />
     </Grid>
 </Window>

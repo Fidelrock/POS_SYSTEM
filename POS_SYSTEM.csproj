@@ -84,6 +84,9 @@
     <Compile Include="Views\ProductDialog.xaml.cs">
       <DependentUpon>ProductDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UpdateStockDialog.xaml.cs">
+      <DependentUpon>UpdateStockDialog.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -110,6 +113,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProductDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateStockDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

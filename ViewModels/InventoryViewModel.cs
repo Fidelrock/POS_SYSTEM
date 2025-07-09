@@ -109,11 +109,17 @@ namespace POS_SYSTEM.ViewModels
         private void UpdateStock()
         {
             if (SelectedProduct == null) { Message = "Select a product to update stock."; return; }
-            // TODO: Show dialog to get new stock value
-            // SelectedProduct.Stock = newStock;
-            // _databaseService.UpdateProduct(SelectedProduct);
-            // LoadData();
-            Message = "Update Stock dialog not implemented.";
+            var dialog = new Views.UpdateStockDialog(SelectedProduct.Stock)
+            {
+                Owner = System.Windows.Application.Current.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive)
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                SelectedProduct.Stock = dialog.NewStock;
+                _databaseService.UpdateProduct(SelectedProduct);
+                LoadData();
+                Message = "Stock updated.";
+            }
         }
 
         private void AddCategory()
