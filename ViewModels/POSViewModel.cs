@@ -26,6 +26,13 @@ namespace POS_SYSTEM.ViewModels
             set { _message = value; OnPropertyChanged(); }
         }
 
+        private string _messageType;
+        public string MessageType
+        {
+            get => _messageType;
+            set { _messageType = value; OnPropertyChanged(); }
+        }
+
         public ObservableCollection<CartItem> Cart { get; set; } = new ObservableCollection<CartItem>();
 
         private decimal _total;
@@ -57,6 +64,7 @@ namespace POS_SYSTEM.ViewModels
                 if (product.Stock <= 0)
                 {
                     Message = $"'{product.Name}' is out of stock.";
+                    MessageType = "error";
                 }
                 else
                 {
@@ -67,16 +75,19 @@ namespace POS_SYSTEM.ViewModels
                         {
                             existingItem.Quantity++;
                             Message = string.Empty;
+                            MessageType = string.Empty;
                         }
                         else
                         {
                             Message = $"Cannot add more '{product.Name}'. Only {product.Stock} in stock.";
+                            MessageType = "warning";
                         }
                     }
                     else
                     {
                         Cart.Add(new CartItem { Product = product, Quantity = 1 });
                         Message = string.Empty;
+                        MessageType = string.Empty;
                     }
                     CalculateTotal();
                 }
@@ -84,6 +95,7 @@ namespace POS_SYSTEM.ViewModels
             else
             {
                 Message = $"Product with barcode '{BarcodeInput}' not found.";
+                MessageType = "error";
             }
             BarcodeInput = string.Empty;
         }
@@ -95,11 +107,13 @@ namespace POS_SYSTEM.ViewModels
             {
                 cartItem.Quantity--;
                 Message = string.Empty;
+                MessageType = string.Empty;
             }
             else
             {
                 Cart.Remove(cartItem);
                 Message = string.Empty;
+                MessageType = string.Empty;
             }
             CalculateTotal();
         }
@@ -115,6 +129,7 @@ namespace POS_SYSTEM.ViewModels
                 if (cartItem.Quantity > cartItem.Product.Stock)
                 {
                     Message = $"Only {cartItem.Product.Stock} of '{cartItem.Product.Name}' in stock. Please adjust quantity.";
+                    MessageType = "error";
                     return;
                 }
             }
@@ -145,6 +160,7 @@ namespace POS_SYSTEM.ViewModels
             Cart.Clear();
             Total = 0;
             Message = "Checkout successful!";
+            MessageType = "success";
         }
 
         private void CalculateTotal()
@@ -158,17 +174,20 @@ namespace POS_SYSTEM.ViewModels
             {
                 cartItem.Quantity = 1;
                 Message = "Quantity cannot be less than 1.";
+                MessageType = "warning";
             }
             else if (cartItem.Quantity > cartItem.Product.Stock)
             {
                 cartItem.Quantity = cartItem.Product.Stock;
                 Message = $"Only {cartItem.Product.Stock} '{cartItem.Product.Name}' in stock.";
+                MessageType = "warning";
             }
             else
             {
                 Message = string.Empty;
+                MessageType = string.Empty;
             }
             CalculateTotal();
         }
     }
-} 
+}

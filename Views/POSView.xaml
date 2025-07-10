@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <utils:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </UserControl.Resources>
-    
+
     <Grid Margin="20">
 
         <Grid.RowDefinitions>
@@ -28,10 +28,30 @@
         <!-- User Feedback Message -->
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,40,0,10"
                    Text="{Binding Message}"
-                   Foreground="Red"
-                   FontWeight="Bold"
-                   FontSize="14"
-                   Visibility="{Binding Message, Converter={StaticResource StringToVisibilityConverter}}"/>
+                   Visibility="{Binding Message, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MessageType}" Value="success">
+                            <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding MessageType}" Value="error">
+                            <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding MessageType}" Value="warning">
+                            <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding MessageType}" Value="info">
+                            <Setter Property="Background" Value="{StaticResource InfoBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <!-- Barcode Input -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">

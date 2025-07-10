@@ -14,6 +14,9 @@
             <TabItem Header="Inventory (Admin)">
                 <views:InventoryView />
             </TabItem>
+            <TabItem Header="Sales History &amp; Reports">
+                <views:SalesHistoryView />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

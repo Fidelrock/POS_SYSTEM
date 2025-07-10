@@ -37,6 +37,13 @@ namespace POS_SYSTEM.ViewModels
             set { _message = value; OnPropertyChanged(); }
         }
 
+        private string _messageType;
+        public string MessageType
+        {
+            get => _messageType;
+            set { _messageType = value; OnPropertyChanged(); }
+        }
+
         public ICommand AddProductCommand { get; }
         public ICommand EditProductCommand { get; }
         public ICommand DeleteProductCommand { get; }
@@ -80,12 +87,13 @@ namespace POS_SYSTEM.ViewModels
                 _databaseService.AddProduct(dialog.Product);
                 LoadData();
                 Message = "Product added.";
+                MessageType = "success";
             }
         }
 
         private void EditProduct()
         {
-            if (SelectedProduct == null) { Message = "Select a product to edit."; return; }
+            if (SelectedProduct == null) { Message = "Select a product to edit."; MessageType = "warning"; return; }
             var dialog = new ProductDialog(SelectedProduct, Categories.ToList())
             {
                 Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
@@ -95,20 +103,22 @@ namespace POS_SYSTEM.ViewModels
                 _databaseService.UpdateProduct(dialog.Product);
                 LoadData();
                 Message = "Product updated.";
+                MessageType = "success";
             }
         }
 
         private void DeleteProduct()
         {
-            if (SelectedProduct == null) { Message = "Select a product to delete."; return; }
+            if (SelectedProduct == null) { Message = "Select a product to delete."; MessageType = "warning"; return; }
             _databaseService.DeleteProduct(SelectedProduct.ProductId);
             Products.Remove(SelectedProduct);
             Message = "Product deleted.";
+            MessageType = "success";
         }
 
         private void UpdateStock()
         {
-            if (SelectedProduct == null) { Message = "Select a product to update stock."; return; }
+            if (SelectedProduct == null) { Message = "Select a product to update stock."; MessageType = "warning"; return; }
             var dialog = new Views.UpdateStockDialog(SelectedProduct.Stock)
             {
                 Owner = System.Windows.Application.Current.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive)
@@ -119,6 +129,7 @@ namespace POS_SYSTEM.ViewModels
                 _databaseService.UpdateProduct(SelectedProduct);
                 LoadData();
                 Message = "Stock updated.";
+                MessageType = "success";
             }
         }
 
@@ -133,12 +144,13 @@ namespace POS_SYSTEM.ViewModels
                 _databaseService.AddCategory(dialog.Category);
                 LoadData();
                 Message = "Category added.";
+                MessageType = "success";
             }
         }
 
         private void EditCategory()
         {
-            if (SelectedCategory == null) { Message = "Select a category to edit."; return; }
+            if (SelectedCategory == null) { Message = "Select a category to edit."; MessageType = "warning"; return; }
             var dialog = new CategoryDialog(SelectedCategory)
             {
                 Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
@@ -148,15 +160,17 @@ namespace POS_SYSTEM.ViewModels
                 _databaseService.UpdateCategory(dialog.Category);
                 LoadData();
                 Message = "Category updated.";
+                MessageType = "success";
             }
         }
 
         private void DeleteCategory()
         {
-            if (SelectedCategory == null) { Message = "Select a category to delete."; return; }
+            if (SelectedCategory == null) { Message = "Select a category to delete."; MessageType = "warning"; return; }
             _databaseService.DeleteCategory(SelectedCategory.CategoryId);
             Categories.Remove(SelectedCategory);
             Message = "Category deleted.";
+            MessageType = "success";
         }
     }
 }
