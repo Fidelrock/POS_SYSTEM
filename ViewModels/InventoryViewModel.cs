@@ -6,6 +6,7 @@ using POS_SYSTEM.Data;
 using System.Linq;
 using POS_SYSTEM.Views;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace POS_SYSTEM.ViewModels
 {
@@ -44,6 +45,19 @@ namespace POS_SYSTEM.ViewModels
             set { _messageType = value; OnPropertyChanged(); }
         }
 
+        public int LowStockThreshold { get; } = 5;
+
+        public IEnumerable<Product> LowStockProducts => Products.Where(p => p.Stock > 0 && p.Stock <= LowStockThreshold);
+
+        public bool HasLowStockProducts => LowStockProducts.Any();
+
+        private string _lowStockAlert;
+        public string LowStockAlert
+        {
+            get => _lowStockAlert;
+            set { _lowStockAlert = value; OnPropertyChanged(); }
+        }
+
         public ICommand AddProductCommand { get; }
         public ICommand EditProductCommand { get; }
         public ICommand DeleteProductCommand { get; }
@@ -74,6 +88,15 @@ namespace POS_SYSTEM.ViewModels
             Categories.Clear();
             foreach (var c in _databaseService.GetAllCategories())
                 Categories.Add(c);
+            // Low stock alert logic
+            if (HasLowStockProducts)
+            {
+                LowStockAlert = $"Warning: {LowStockProducts.Count()} product(s) are low on stock (≤ {LowStockThreshold}).";
+            }
+            else
+            {
+                LowStockAlert = string.Empty;
+            }
         }
 
         private void AddProduct()

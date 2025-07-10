@@ -4,8 +4,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:POS_SYSTEM.ViewModels"
+             xmlns:local="clr-namespace:POS_SYSTEM.Utilities"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="900">
+    <UserControl.Resources>
+        <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </UserControl.Resources>
     <UserControl.DataContext>
         <vm:InventoryViewModel />
     </UserControl.DataContext>
@@ -53,6 +57,22 @@
                         <Button Content="Update Stock" Command="{Binding UpdateStockCommand}" Margin="0,0,10,0"/>
                         <Button Content="Refresh" Command="{Binding RefreshCommand}"/>
                     </StackPanel>
+                    <!-- Low Stock Alert Message -->
+                    <TextBlock Text="{Binding LowStockAlert}" FontWeight="Bold" FontSize="13" Margin="0,0,0,10" Visibility="{Binding LowStockAlert, Converter={StaticResource StringToVisibilityConverter}}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="Orange"/>
+                                <Setter Property="Padding" Value="6,2"/>
+                                <Setter Property="TextAlignment" Value="Center"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LowStockAlert}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <DataGrid ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,10">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
